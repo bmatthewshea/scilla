@@ -105,7 +105,7 @@ module ScillaSanityChecker
                 | [] -> [[loc]]
                 (* Otherwise add this accept statement to the list of accepts
                  * already seen on each code path reaching this point. *)
-                | _ -> List.map (fun accepts -> accepts @ [loc]) seen2)
+                | _ -> List.map (fun accepts -> loc :: accepts) seen2)
             | MatchStmt (_ident, branches) ->
                (* For each branch in the match statement we have a
                     new code path to "multiply" with the code paths
@@ -126,7 +126,7 @@ module ScillaSanityChecker
 
     let check_accepts (contr : contract) =
       let check_transition_accepts (transition : transition) =
-        let transition_accept_groups = (find_accept_groups transition.tbody) in
+        let transition_accept_groups = List.map List.rev (find_accept_groups transition.tbody) in
 
         let dup_accept_warning (group : loc list) : unit =
           (warn1
